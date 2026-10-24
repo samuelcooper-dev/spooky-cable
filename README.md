@@ -4,6 +4,12 @@ A fully-functional cable TV experience in your browser. Live channels with sched
 
 **Current capabilities:** 9 themed Halloween channels · Schedule-accurate playback with HTTP Range seeking · Picture-in-picture interactive guide · On-demand library with playlists · Resume playback · Full video player controls · Retro CRT aesthetic with scanlines · All client-side, no backend required
 
+![Live TV](shots/feature-02-live-tv.png)
+*Live TV viewing with retro channel surfing experience*
+
+![Interactive Guide](shots/feature-07-interactive-guide.png)
+*Picture-in-picture guide with cursor navigation – browse while you watch*
+
 ## The Problem
 
 Remember when "what's on TV" meant flipping through channels or browsing a scrolling program guide? Modern streaming assumes you know exactly what you want to watch. There's no discovery through surfing, no surprise finds, no shared schedule—everyone watches different things at different times.
@@ -23,11 +29,25 @@ And building a realistic cable TV simulator is harder than it looks:
 - **Retro CRT aesthetic** — Scanlines, vignette, retro fonts, static burst effects, channel watermarks. Press R to toggle retro mode.
 - **Authentic 90s UI patterns** — Channel number overlays, info banners with "Up Next" sections, mini guide pop-ups, volume bars, all styled like real 90s cable boxes.
 
-![On-Demand Library](shots/od-1-library.png)
-*On-demand library with thumbnail grid, search, and playlists*
+### Visual Tour
 
-![Video Player](shots/od-3-player.png)
+![Info Banner](shots/feature-03-info-banner.png)
+*Info banner with "Now Playing" and "Up Next" – authentic 90s cable aesthetic*
+
+![Guide Channel](shots/feature-05-guide-channel.png)
+*Channel 1 – Prevue-style scrolling guide showing all programming*
+
+![PiP Guide](shots/feature-06-pip-guide.png)
+*Picture-in-picture guide – video continues in corner while you browse*
+
+![On-Demand Library](shots/feature-11-ondemand-library.png)
+*On-demand library with category browsing and program selection*
+
+![Video Player](shots/feature-14-ondemand-controls.png)
 *Full-featured video player with seek bar, volume, and playlist controls*
+
+![Retro Mode](shots/feature-10-retro-mode.png)
+*Retro mode – authentic CRT scanlines and vignette effects*
 
 ## How It Works — From Power-On to Playback
 
@@ -215,6 +235,9 @@ python serve.py
 # http://localhost:8000/tv/
 ```
 
+![Power On](shots/feature-01-power-screen.png)
+*Press any key to power on the TV and start watching*
+
 ## Controls
 
 ### General
@@ -228,12 +251,22 @@ python serve.py
 - **Fullscreen:** F
 - **Retro Mode:** R (toggle scanlines)
 
+![Fullscreen Mode](shots/feature-09-fullscreen.png)
+*Fullscreen mode – immersive viewing experience, perfect for TV setups*
+
 ### Guide
 - **Open PiP Guide:** G
 - **Interactive Grid:** Arrow keys while in guide
 - **Navigate:** ↑ ↓ ← → or click cells
 - **Tune to Channel:** Enter or click now-airing program
+- **Channel Switching in PiP:** Number keys 1-9 change channels while guide stays open
 - **Exit:** Escape or G
+
+![PiP Channel Switching](shots/feature-16-pip-channel-switch.png)
+*Switch channels while browsing the guide – the video updates in the corner*
+
+![Interactive Guide Navigation](shots/feature-08-interactive-guide-nav.png)
+*Navigate the interactive guide grid with arrow keys – select any program to tune in*
 
 ### On-Demand
 - **Open Library:** D
@@ -242,6 +275,9 @@ python serve.py
 - **Play Video:** Enter
 - **Add to Playlist:** +
 - **Category Chips:** [ ] to cycle
+
+![On-Demand Program Selection](shots/feature-12-ondemand-programs.png)
+*Browse programs by category with duration info and resume progress tracking*
 
 ### Video Player (On-Demand)
 - **Play/Pause:** Space or K or click video
@@ -252,6 +288,9 @@ python serve.py
 - **Next/Previous:** N / P
 - **Exit Player:** Escape (returns to library)
 - **Exit Library:** Escape again (returns to live TV)
+
+![On-Demand Player](shots/feature-13-ondemand-player.png)
+*On-demand playback with full video player controls and resume functionality*
 
 ## Project Structure
 
