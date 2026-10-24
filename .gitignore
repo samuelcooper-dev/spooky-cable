@@ -12,9 +12,11 @@
 # Node modules
 node_modules/
 
-# Playwright artifacts
-shots/
-*.png
+# Test/temp screenshots (but keep shots/ for README)
+/*.png
+debug_*.png
+regression_*.png
+range_test.png
 
 # Backup files
 *.bak*
