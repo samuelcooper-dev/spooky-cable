@@ -1,0 +1,19 @@
+{
+  "girlfriendName": "PLACEHOLDER_NAME",
+  "networkName": "Spooky Cable",
+  "theme": {
+    "colors": {
+      "lavender": "#E6D5FF",
+      "blushPink": "#FFD5E5",
+      "pumpkinOrange": "#FF9944",
+      "cream": "#FFF8E7",
+      "midnightBlue": "#2A2D5A"
+    }
+  },
+  "server": {
+    "type": "unknown",
+    "address": "",
+    "username": "",
+    "password": ""
+  }
+}

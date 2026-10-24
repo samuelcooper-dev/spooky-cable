@@ -1,0 +1,53 @@
+Implement the new On-Demand screen in C:\Users\sampc\tv (Spooky Cable).
+
+The finished files are ALREADY in C:\Users\sampc\tv:
+  ondemand.js    - library (thumbnail grid, click + search, category chips), playlist builder with
+                   autoplay, and a full video player (play/pause, rewind/forward 10s, seek bar,
+                   volume, next/previous). Wraps SpookyCable.prototype; it does not edit app.js.
+  ondemand.css   - styles for the above (all selectors start with .od- / #od)
+  make_thumbs.py - makes a .jpg thumbnail next to every video (needs ffmpeg)
+  od_test.js     - Playwright checks for all of it (35 checks, passed in my own test copy)
+
+Read ondemand.js first (it is commented) before doing anything.
+
+RULES: Do NOT edit app.js or style.css. Live TV, the guide and the '#'-filename video fix
+(mediaUrl) work today and I keep regressing them. If you believe app.js needs a change, stop
+and tell me why instead of making it.
+
+STEPS
+1. Back up index.html to index.html.bak-before-ondemand.
+2. In index.html add after the style.css <link>:   <link rel="stylesheet" href="ondemand.css">
+   and after <script src="app.js"></script>:        <script src="ondemand.js"></script>
+3. Verify these assumptions against app.js and report any that are false (fix only inside
+   ondemand.js if so):
+   a. this.channels is a Map of channelNum -> channel with .files[] ({path,title,duration});
+      buildOnDemandCategories() does not filter channels some other way (mirror it in odCatalog()).
+   b. tuneToChannel(this.currentChannel) with the same channel number re-tunes and puts the live
+      video back at its live position (closeOnDemand() relies on this).
+   c. playMediaChannel() leaves no addEventListener-based loadedmetadata handler that could
+      seek the on-demand video (odPlay clears the onloadedmetadata/onended properties).
+   d. compress.py and download_movies.py ignore .jpg files inside media\<channel>\ and
+      index.json generation is unaffected.
+4. Optional, serve.py: add ".jpg" to the tuple of extensions that skip Cache-Control: no-store
+   so thumbnails are cached.
+5. Run:  python make_thumbs.py     (from the tv folder; makes the thumbnails)
+
+TESTING WITH PLAYWRIGHT
+- Playwright's bundled Chromium cannot play H.264/HEVC. Launch with channel:'chrome' (installed
+  Chrome) or test against small VP8 stand-in videos served under .mp4 names.
+- Start the server with:  python serve.py   (Range support; http.server breaks seeking)
+- Adjust od_test.js to this machine: URL http://127.0.0.1:8000/tv/, channel 3 must be a media
+  channel, at least one video needs a .jpg next to it, and ~20+ videos total.
+- Run a REGRESSION CHECK before the change and again after. All must match:
+    * live TV: tune channels 2 (file with '#' in its name), 3 and 8. Video plays, currentTime
+      advances, a channel change does not restart at 0:00.
+    * guide: 'g' then arrow keys keeps the PiP video visible; clicking a now-airing cell tunes.
+    * press D, play a video, Esc, Esc: back on the same live channel, playing, same volume.
+- Then run od_test.js. Every check must pass. Also take screenshots of the library, the
+  playlist view and the player, and look at them.
+- Also check manually with the real files in Chrome: a real H.264/HEVC video plays from the
+  library, seeking works (click the seek bar, press Left/Right), and the playlist autoplays
+  into the next video.
+
+If any regression check changes, or any od_test check fails, stop and report; do not patch
+around it in app.js.

@@ -1,0 +1,101 @@
+/* ondemand.css  -  NEW FILE.  <link rel="stylesheet" href="ondemand.css"> after style.css.
+   All selectors start with .od- or #od so nothing existing is affected.
+   The stage is 1920x1080 and scaled to the window, so sizes here are in stage pixels. */
+
+.od-root, .od-player { position: absolute; inset: 0; color: #fff; }
+.od-root.hidden, .od-player.hidden { display: none; }
+
+/* ---------- library ---------- */
+.od-root {
+    z-index: 820;                       /* above the old overlay (800) and the video (5) */
+    background: var(--midnight, #0b0720);
+    display: flex; flex-direction: column;
+    padding: 36px 60px 14px; box-sizing: border-box;
+}
+.od-top { display: flex; align-items: center; gap: 24px; height: 84px; flex: none; }
+.od-title { font-size: 46px; letter-spacing: 4px; color: var(--pumpkin, #ff8a3d); white-space: nowrap; }
+#odSearch {
+    flex: 1; min-width: 0; font: inherit; font-size: 30px; padding: 12px 20px; color: #fff;
+    background: #1a1235; border: 3px solid var(--pumpkin, #ff8a3d); border-radius: 10px; outline: none;
+}
+#odSearch:focus { box-shadow: 0 0 0 4px rgba(255, 138, 61, .4); }
+.od-btn {
+    font: inherit; font-size: 28px; padding: 12px 22px; color: #fff; background: #2a1a4a;
+    border: 3px solid var(--pumpkin, #ff8a3d); border-radius: 10px; cursor: pointer; white-space: nowrap;
+}
+.od-btn:hover:not(:disabled) { background: #3d2670; }
+.od-btn:disabled { opacity: .4; cursor: default; }
+
+.od-chips { display: flex; gap: 12px; flex-wrap: wrap; padding: 14px 0 10px; flex: none; }
+.od-chip {
+    font: inherit; font-size: 24px; padding: 8px 20px; border-radius: 30px; cursor: pointer;
+    color: #cbb8f5; background: transparent; border: 2px solid #5b3f94;
+}
+.od-chip:hover { background: rgba(255, 255, 255, .08); }
+.od-chip.on { color: #1a0f2e; background: var(--pumpkin, #ff8a3d); border-color: var(--pumpkin, #ff8a3d); font-weight: bold; }
+
+.od-grid {
+    flex: 1; min-height: 0; overflow-y: auto; position: relative;      /* position: lets offsetTop scroll maths work */
+    display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 22px 22px; align-content: start;
+    padding: 8px 6px 20px; scrollbar-width: thin; scrollbar-color: #5b3f94 transparent;
+}
+.od-card { cursor: pointer; border-radius: 12px; padding: 8px; border: 3px solid transparent; }
+.od-card:hover { background: rgba(255, 255, 255, .07); }
+.od-card.sel { border-color: var(--yellow, #ffd23f); background: rgba(255, 210, 63, .12); }
+.od-thumb { position: relative; aspect-ratio: 16 / 9; background: #1a1235; border-radius: 8px; overflow: hidden; }
+.od-thumb img, .od-ph { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.od-ph { display: flex; align-items: center; justify-content: center; font-size: 70px; }   /* shows until a thumbnail loads */
+.od-dur { position: absolute; right: 8px; bottom: 10px; background: rgba(0, 0, 0, .8); padding: 2px 8px; border-radius: 5px; font-size: 20px; }
+.od-resume { position: absolute; left: 0; right: 0; bottom: 0; height: 7px; background: rgba(255, 255, 255, .25); }
+.od-resume i { display: block; height: 100%; background: var(--pumpkin, #ff8a3d); }
+.od-add {
+    position: absolute; left: 8px; top: 8px; width: 46px; height: 46px; padding: 0; border-radius: 50%;
+    font: inherit; font-size: 30px; line-height: 1; color: #fff; background: rgba(0, 0, 0, .75);
+    border: 2px solid #fff; cursor: pointer;
+}
+.od-add:hover { background: rgba(0, 0, 0, .95); }
+.od-add.on { color: #1a0f2e; background: var(--pumpkin, #ff8a3d); border-color: var(--pumpkin, #ff8a3d); }
+.od-num { position: absolute; left: 8px; top: 8px; color: #1a0f2e; background: var(--pumpkin, #ff8a3d); font-weight: bold; font-size: 26px; padding: 2px 14px; border-radius: 20px; }
+.od-tools { position: absolute; right: 8px; top: 8px; display: flex; gap: 6px; }
+.od-tools button { font: inherit; font-size: 20px; width: 40px; height: 40px; padding: 0; color: #fff; background: rgba(0, 0, 0, .75); border: 2px solid #fff; border-radius: 8px; cursor: pointer; }
+.od-tools button:hover { background: var(--pumpkin, #ff8a3d); color: #1a0f2e; }
+.od-name { margin-top: 10px; font-size: 24px; line-height: 1.2; max-height: 2.4em; overflow: hidden; }
+.od-ch { margin-top: 4px; font-size: 19px; color: #b9a5e6; }
+.od-empty { grid-column: 1 / -1; text-align: center; font-size: 34px; line-height: 1.5; color: #b9a5e6; padding: 90px 0; }
+.od-help { flex: none; height: 46px; display: flex; align-items: center; gap: 34px; font-size: 20px; color: #9a86c9; }
+
+/* ---------- player ---------- */
+.od-player { z-index: 830; background: transparent; }       /* transparent: the TV's <video> shows through */
+.od-player:not(.show) { cursor: none; }
+.od-osd {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-size: 64px; padding: 14px 40px; border-radius: 16px; background: rgba(0, 0, 0, .65);
+    opacity: 0; transition: opacity .25s; pointer-events: none;
+}
+.od-osd.show { opacity: 1; }
+.od-bar {
+    position: absolute; left: 0; right: 0; bottom: 0; padding: 100px 60px 34px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, .88));
+    opacity: 0; transition: opacity .25s; pointer-events: none;
+}
+.od-player.show .od-bar { opacity: 1; pointer-events: auto; }
+.od-now { font-size: 30px; margin-bottom: 14px; text-shadow: 0 2px 4px #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.od-seek { position: relative; height: 16px; margin-bottom: 20px; border-radius: 8px; background: rgba(255, 255, 255, .28); cursor: pointer; touch-action: none; }
+.od-seek::before { content: ''; position: absolute; left: 0; right: 0; top: -14px; bottom: -14px; }   /* taller click target */
+.od-fill { position: relative; height: 100%; width: 0; border-radius: 8px; background: var(--pumpkin, #ff8a3d); }
+.od-fill::after { content: ''; position: absolute; right: -14px; top: -6px; width: 28px; height: 28px; border-radius: 50%; background: #fff; }
+.od-row { display: flex; align-items: center; gap: 14px; font-size: 30px; }
+.od-row button {
+    font: inherit; font-size: 34px; min-width: 72px; height: 72px; padding: 0 16px; color: #fff;
+    background: rgba(255, 255, 255, .12); border: 3px solid transparent; border-radius: 12px; cursor: pointer;
+}
+.od-row button:hover { background: rgba(255, 255, 255, .3); }
+#odVol { width: 160px; accent-color: var(--pumpkin, #ff8a3d); }
+.od-spacer { flex: 1; }
+
+.od-toast {
+    position: absolute; top: 30px; left: 50%; transform: translateX(-50%); z-index: 840;
+    font-size: 30px; padding: 10px 30px; border-radius: 30px; background: rgba(0, 0, 0, .85);
+    opacity: 0; transition: opacity .25s; pointer-events: none;
+}
+.od-toast.show { opacity: 1; }

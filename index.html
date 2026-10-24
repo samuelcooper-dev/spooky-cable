@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spooky Cable</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="ondemand.css">
+    <script src="scale.js"></script>
+</head>
+<body>
+    <!-- Fixed 1920x1080 Stage (scaled to fit window) -->
+    <div id="stage" class="stage">
+
+        <!-- Power-On Screen -->
+        <div id="powerScreen" class="power-screen active">
+            <div class="power-content">
+                <div class="power-logo">🎃 SPOOKY CABLE 📺</div>
+                <div class="power-message">Press any key to power on</div>
+                <div class="power-greeting" id="powerGreeting">Happy Halloween!</div>
+            </div>
+        </div>
+
+        <!-- Main Video -->
+        <video id="mainVideo" class="main-video"></video>
+
+        <!-- Channel Watermark (bottom-right corner) -->
+        <div id="channelWatermark" class="channel-watermark hidden">
+            <div class="watermark-logo" id="watermarkLogo">🎃</div>
+            <div class="watermark-name" id="watermarkName">SPOOKY</div>
+        </div>
+
+        <!-- Static Burst Effect -->
+        <div id="staticBurst" class="static-burst hidden"></div>
+
+        <!-- Channel Number Display (top-right, 3 seconds) -->
+        <div id="channelNumber" class="channel-number hidden">
+            <span id="channelNumText">3</span>
+        </div>
+
+        <!-- Number Entry Display (top-right while typing) -->
+        <div id="numberEntry" class="number-entry hidden">
+            <span id="entryText"></span>
+        </div>
+
+        <!-- Info Banner (bottom bar, 5 seconds) -->
+        <div id="infoBanner" class="info-banner hidden">
+            <div class="info-left">
+                <span class="info-channel-num" id="infoChannelNum">3</span>
+                <span class="info-channel-name" id="infoChannelName">Scooby-Doo</span>
+            </div>
+            <div class="info-center">
+                <div class="info-title" id="infoTitle">Scooby-Doo on Zombie Island</div>
+                <div class="info-time" id="infoTime">8:00 PM - 9:30 PM</div>
+                <div class="info-duration" id="infoDuration"></div>
+                <div class="info-progress-bar">
+                    <div class="info-progress-fill" id="infoProgress"></div>
+                </div>
+            </div>
+            <div class="info-right">
+                <div class="info-next">Up next:</div>
+                <div class="info-next-title" id="infoNextTitle">Scooby-Doo and the Witch's Ghost</div>
+                <div class="info-next-time" id="infoNextTime">at 9:30 PM</div>
+            </div>
+        </div>
+
+        <!-- Mini Guide Overlay (bottom third, 5 channels) -->
+        <div id="miniGuide" class="mini-guide hidden">
+            <div class="mini-guide-content" id="miniGuideContent">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Guide Channel (Channel 1 - Prevue style) -->
+        <div id="guideChannel" class="guide-channel hidden">
+            <!-- Top 40%: Video + Messages -->
+            <div class="guide-top">
+                <div class="guide-promo-window">
+                    <canvas id="promoCanvas" class="promo-canvas"></canvas>
+                </div>
+                <div class="guide-messages">
+                    <div class="guide-message-header">🎃 SPOOKY CABLE</div>
+                    <div class="guide-message-body" id="guideMessage">
+                        <!-- Rotating messages -->
+                    </div>
+                    <div class="guide-clock" id="guideClock">8:00 PM</div>
+                </div>
+            </div>
+
+            <!-- Bottom 60%: Scrolling Grid -->
+            <div class="guide-bottom">
+                <div class="guide-grid-header" id="guideGridHeader">
+                    <!-- Time column headers -->
+                </div>
+                <div class="guide-grid-body" id="guideGridBody">
+                    <!-- Channel rows with program cells -->
+                </div>
+            </div>
+
+            <!-- Footer Strip -->
+            <div class="guide-footer">
+                <span class="guide-footer-text">You are watching Spooky Cable</span>
+                <span class="guide-footer-tip" id="guideFooterTip">Press any arrow key for interactive guide</span>
+            </div>
+        </div>
+
+        <!-- Interactive Guide (full grid with cursor) -->
+        <div id="interactiveGuide" class="interactive-guide hidden">
+            <div class="interactive-guide-header">
+                <div class="interactive-guide-title">PROGRAM GUIDE</div>
+                <div class="interactive-guide-clock" id="interactiveClock">8:00 PM</div>
+            </div>
+
+            <div class="interactive-guide-grid">
+                <div class="interactive-grid-header" id="interactiveGridHeader"></div>
+                <div class="interactive-grid-body" id="interactiveGridBody"></div>
+            </div>
+
+            <div class="interactive-guide-detail" id="interactiveDetail">
+                <!-- Selected program details -->
+            </div>
+
+            <div class="interactive-guide-footer">
+                <span>↑↓ Channels</span>
+                <span>←→ Time</span>
+                <span>ENTER Tune</span>
+                <span>ESC Exit</span>
+            </div>
+        </div>
+
+        <!-- On-Demand Mode (browse all programs) -->
+        <div id="onDemandOverlay" class="on-demand-overlay hidden">
+            <div class="on-demand-header">
+                <div class="on-demand-title">📺 ON-DEMAND LIBRARY</div>
+                <div class="on-demand-subtitle">Press D to exit | ENTER to watch</div>
+            </div>
+
+            <div class="on-demand-content">
+                <div class="on-demand-categories" id="onDemandCategories">
+                    <!-- Channel categories -->
+                </div>
+                <div class="on-demand-programs" id="onDemandPrograms">
+                    <!-- Program list for selected category -->
+                </div>
+            </div>
+
+            <div class="on-demand-detail" id="onDemandDetail">
+                <!-- Selected program details -->
+            </div>
+
+            <div class="on-demand-footer">
+                <span>↑↓ Navigate</span>
+                <span>←→ Switch Category</span>
+                <span>ENTER Watch</span>
+                <span>D Exit</span>
+            </div>
+        </div>
+
+        <!-- Volume Display -->
+        <div id="volumeDisplay" class="volume-display hidden">
+            <div class="volume-label">VOLUME</div>
+            <div class="volume-bar-outer">
+                <div class="volume-bar-inner" id="volumeBar"></div>
+            </div>
+            <div class="volume-mute" id="volumeMuteIndicator">MUTE</div>
+        </div>
+
+        <!-- Help Hint (5 seconds at power-on) -->
+        <div id="helpHint" class="help-hint hidden">
+            ↑↓ Channel • G Guide • D On-Demand • I Info • M Mute • F Fullscreen • R Retro
+        </div>
+
+        <!-- Retro Mode Overlays (scanlines + vignette) -->
+        <div id="retroOverlay" class="retro-overlay hidden">
+            <div class="scanlines"></div>
+            <div class="vignette"></div>
+        </div>
+
+    </div>
+
+    <script src="app.js"></script>
+    <script src="ondemand.js"></script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spooky Cable Setup Verification</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #1b1747;
+            color: #fff4e0;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 { color: #ff8a3d; }
+        .test {
+            padding: 10px;
+            margin: 10px 0;
+            background: #2a2370;
+            border-left: 4px solid #5b3fa8;
+        }
+        .pass { border-left-color: #00ff00; }
+        .fail { border-left-color: #ff0000; }
+        pre {
+            background: #000;
+            padding: 10px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎃 Spooky Cable Setup Verification</h1>
+    <div id="results">Testing...</div>
+
+    <script>
+        async function runTests() {
+            const results = document.getElementById('results');
+            results.innerHTML = '';
+
+            function addResult(name, passed, details) {
+                const div = document.createElement('div');
+                div.className = `test ${passed ? 'pass' : 'fail'}`;
+                div.innerHTML = `
+                    <strong>${passed ? '✓' : '✗'} ${name}</strong><br>
+                    ${details ? `<pre>${details}</pre>` : ''}
+                `;
+                results.appendChild(div);
+            }
+
+            // Test 1: Media Index
+            try {
+                const response = await fetch('media/index.json');
+                const data = await response.json();
+                const channelCount = Object.keys(data.channels || {}).length;
+                const totalFiles = Object.values(data.channels || {})
+                    .reduce((sum, ch) => sum + (ch.files?.length || 0), 0);
+
+                addResult('Media Index Loaded', true,
+                    `Channels: ${channelCount}\nTotal files: ${totalFiles}`);
+
+                // Show sample channel
+                const firstChannel = Object.entries(data.channels)[0];
+                if (firstChannel) {
+                    const [name, ch] = firstChannel;
+                    addResult(`Sample Channel: ${name}`, true,
+                        `Files: ${ch.files.length}\n` +
+                        `Duration: ${(ch.total_duration / 60).toFixed(1)} min\n` +
+                        `First file: ${ch.files[0]?.title}`);
+                }
+            } catch (error) {
+                addResult('Media Index Loaded', false, error.message);
+            }
+
+            // Test 2: Video File Access
+            try {
+                const indexResponse = await fetch('media/index.json');
+                const indexData = await indexResponse.json();
+
+                // Try to fetch first video file
+                const firstChannel = Object.values(indexData.channels)[0];
+                if (firstChannel && firstChannel.files && firstChannel.files[0]) {
+                    const videoPath = `media/${firstChannel.files[0].path}`;
+                    const videoResponse = await fetch(videoPath, { method: 'HEAD' });
+
+                    if (videoResponse.ok) {
+                        const size = videoResponse.headers.get('content-length');
+                        addResult('Video Files Accessible', true,
+                            `Path: ${videoPath}\nSize: ${(size / 1024 / 1024).toFixed(1)} MB`);
+                    } else {
+                        addResult('Video Files Accessible', false,
+                            `HTTP ${videoResponse.status}: ${videoResponse.statusText}`);
+                    }
+                }
+            } catch (error) {
+                addResult('Video Files Accessible', false, error.message);
+            }
+
+            // Test 3: App Files
+            const appFiles = ['app.js', 'style.css', 'index.html'];
+            for (const file of appFiles) {
+                try {
+                    const response = await fetch(file, { method: 'HEAD' });
+                    addResult(`File: ${file}`, response.ok,
+                        response.ok ? 'OK' : `HTTP ${response.status}`);
+                } catch (error) {
+                    addResult(`File: ${file}`, false, error.message);
+                }
+            }
+
+            addResult('Setup Verification Complete', true,
+                'If all tests passed, open http://localhost:8000/ to start watching!');
+        }
+
+        runTests();
+    </script>
+</body>
+</html>

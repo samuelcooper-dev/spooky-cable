@@ -1,0 +1,57 @@
+{
+  "channels": {
+    "scooby-doo": {
+      "files": [
+        {
+          "filename": "scooby_zombie_island.mp4",
+          "path": "scooby-doo/scooby_zombie_island.mp4",
+          "duration": 4680,
+          "title": "Scooby-Doo on Zombie Island"
+        },
+        {
+          "filename": "scooby_witchs_ghost.mp4",
+          "path": "scooby-doo/scooby_witchs_ghost.mp4",
+          "duration": 4200,
+          "title": "Scooby-Doo and the Witch's Ghost"
+        }
+      ],
+      "total_duration": 8880
+    },
+    "halloween-specials": {
+      "files": [
+        {
+          "filename": "great_pumpkin.mp4",
+          "path": "halloween-specials/great_pumpkin.mp4",
+          "duration": 1560,
+          "title": "It's the Great Pumpkin, Charlie Brown"
+        },
+        {
+          "filename": "garfield_halloween.mp4",
+          "path": "halloween-specials/garfield_halloween.mp4",
+          "duration": 1440,
+          "title": "Garfield's Halloween Adventure"
+        }
+      ],
+      "total_duration": 3000
+    },
+    "spooky-movies": {
+      "files": [
+        {
+          "filename": "hocus_pocus.mp4",
+          "path": "spooky-movies/hocus_pocus.mp4",
+          "duration": 5760,
+          "title": "Hocus Pocus"
+        },
+        {
+          "filename": "casper.mp4",
+          "path": "spooky-movies/casper.mp4",
+          "duration": 6060,
+          "title": "Casper"
+        }
+      ],
+      "total_duration": 11820
+    }
+  },
+  "generated": 1729700000,
+  "_note": "This is a demo index. Replace with actual media files in media/ folder structure."
+}
